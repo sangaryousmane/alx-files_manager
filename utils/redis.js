@@ -1,6 +1,9 @@
 import redis from 'redis';
 import { promisify } from 'util';
 
+/**
+ * This class is use performing operations with Redis service
+ */
 class RedisClient {
   constructor () {
     this.client = redis.createClient();
