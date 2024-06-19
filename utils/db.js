@@ -1,5 +1,8 @@
 import { MongoClient } from 'mongodb';
 
+/**
+ * A DB connection service for mongo client
+ */
 class DBClient {
   constructor () {
     const host = process.env.DB_HOST || 'localhost';
