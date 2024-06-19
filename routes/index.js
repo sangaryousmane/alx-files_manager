@@ -3,7 +3,7 @@ import UsersController from '../controllers/UsersController.js';
 
 import { Router } from 'express';
 
-function routes (app) {
+function routesStore (app) {
   const router = Router();
   app.use('/', router);
 
@@ -14,9 +14,24 @@ function routes (app) {
   router.get('/stats', (req, res) => {
     AppController.getStats(req, res);
   });
+ 
+  // User controller services
+  router.post('/users', (req, res) => {
+    UsersController.postNew(req, res);
+  });
 
-  router.post("/users", (req, res) => {
-   UsersController.postNew(req, res);
-  }
+  router.get("/users/me", (req, res) => {
+    UsersController.get(req, res);
+  });
+
+  // Authentication service
+  router.get("/connect", (req, res) => {
+    AuthController.getConnect(req, res);
+  });
+
+  router.get("/disconnect", (req, res) => {
+   AuthController.getDisconnect(req, res);
+  });
+
 }
-export default routes;
+export default routesStore;
