@@ -1,7 +1,3 @@
-/* Make a redis client */
-
-const redis = require('redis');
-
 class RedisClient {
   constructor () {
     this.client = redis.createClient();
@@ -23,19 +19,11 @@ class RedisClient {
   }
 
   async set (key, value, duration) {
-    try {
-      await this.client.set(key, value, 'EX', duration);
-    } catch (err) {
-      console.error(`Error setting key: ${key}, ${err}`);
-    }
+	  await this.client.setex(key, duration, value);
   }
 
   async del (key) {
-    try {
-      await this.client.del(key);
-    } catch (err) {
-      console.error(`Error deleting key ${key}, ${err}`);
-    }
+    await this.client.del(key);
   }
 }
 const redisClient = new RedisClient();
