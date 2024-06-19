@@ -1,11 +1,11 @@
-import AppController from '../controllers/AppController.js';
-import UsersController from '../controllers/UsersController.js';
-import AuthController from '../controllers/AuthController.js';
+import express from 'express';
+import AppController from '../controllers/AppController';
+import UsersController from '../controllers/UsersController';
+import AuthController from '../controllers/AuthController';
+import FilesController from '../controllers/FilesController';
 
-import { Router } from 'express';
-
-function routesStore (app) {
-  const router = Router();
+function routingFunc(app) {
+  const router = express.Router();
   app.use('/', router);
 
   router.get('/status', (req, res) => {
@@ -15,24 +15,46 @@ function routesStore (app) {
   router.get('/stats', (req, res) => {
     AppController.getStats(req, res);
   });
- 
-  // User controller services
+
   router.post('/users', (req, res) => {
     UsersController.postNew(req, res);
   });
 
-  router.get("/users/me", (req, res) => {
-    UsersController.get(req, res);
+  router.get('/users/me', (req, res) => {
+    UsersController.getMe(req, res);
   });
 
-  // Authentication service
-  router.get("/connect", (req, res) => {
+  router.get('/connect', (req, res) => {
     AuthController.getConnect(req, res);
   });
 
-  router.get("/disconnect", (req, res) => {
-   AuthController.getDisconnect(req, res);
+  router.get('/disconnect', (req, res) => {
+    AuthController.getDisconnect(req, res);
   });
 
+  router.post('/files', (req, res) => {
+    FilesController.postUpload(req, res);
+  });
+
+  router.get('/files/:id', (req, res) => {
+    FilesController.getShow(req, res);
+  });
+
+  router.get('/files', (req, res) => {
+    FilesController.getIndex(req, res);
+  });
+
+  router.put('/files/:id/publish', (req, res) => {
+    FilesController.putPublish(req, res);
+  });
+
+  router.put('/files/:id/unpublish', (req, res) => {
+    FilesController.putUnpublish(req, res);
+  });
+
+  router.get('/files/:id/data', (req, res) => {
+    FilesController.getFile(req, res);
+  });
 }
-export default routesStore;
+
+export default routingFunc;
