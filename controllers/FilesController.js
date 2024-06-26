@@ -10,7 +10,7 @@ const FOLDER_PATH = process.env.FOLDER_PATH || '/tmp/files_manager';
 const fileQueue = new Queue('fileQueue');
 
 class FilesController {
-  static async postUpload (request, response) {
+  static async postUpload(request, response) {
     const { userId } = await userUtils.getUserIdAndKey(request);
 
     if (!basicUtils.isValidId(userId)) {
@@ -27,7 +27,7 @@ class FilesController {
     if (!user) return response.status(401).send({ error: 'Unauthorized' });
 
     const { error: validationError, fileParams } = await fileUtils.validateBody(
-      request
+      request,
     );
 
     if (validationError) { return response.status(400).send({ error: validationError }); }
@@ -37,7 +37,7 @@ class FilesController {
     const { error, code, newFile } = await fileUtils.saveFile(
       userId,
       fileParams,
-      FOLDER_PATH
+      FOLDER_PATH,
     );
 
     if (error) {
@@ -48,20 +48,19 @@ class FilesController {
     if (fileParams.type === 'image') {
       await fileQueue.add({
         fileId: newFile.id.toString(),
-        userId: newFile.userId.toString()
+        userId: newFile.userId.toString(),
       });
     }
-
     return response.status(201).send(newFile);
   }
 
-  static async getShow (request, response) {
+  static async getShow(request, response) {
     const fileId = request.params.id;
 
     const { userId } = await userUtils.getUserIdAndKey(request);
 
     const user = await userUtils.getUser({
-      _id: ObjectId(userId)
+      _id: ObjectId(userId),
     });
 
     if (!user) return response.status(401).send({ error: 'Unauthorized' });
@@ -70,7 +69,7 @@ class FilesController {
 
     const result = await fileUtils.getFile({
       _id: ObjectId(fileId),
-      userId: ObjectId(userId)
+      userId: ObjectId(userId),
     });
 
     if (!result) return response.status(404).send({ error: 'Not found' });
@@ -80,11 +79,11 @@ class FilesController {
     return response.status(200).send(file);
   }
 
-  static async getIndex (request, response) {
+  static async getIndex(request, response) {
     const { userId } = await userUtils.getUserIdAndKey(request);
 
     const user = await userUtils.getUser({
-      _id: ObjectId(userId)
+      _id: ObjectId(userId),
     });
 
     if (!user) return response.status(401).send({ error: 'Unauthorized' });
@@ -103,7 +102,7 @@ class FilesController {
       parentId = ObjectId(parentId);
 
       const folder = await fileUtils.getFile({
-        _id: ObjectId(parentId)
+        _id: ObjectId(parentId),
       });
 
       if (!folder || folder.type !== 'folder') { return response.status(200).send([]); }
@@ -113,8 +112,8 @@ class FilesController {
       { $match: { parentId } },
       { $skip: page * 20 },
       {
-        $limit: 20
-      }
+        $limit: 20,
+      },
     ];
 
     const fileCursor = await fileUtils.getFilesOfParentId(pipeline);
@@ -128,10 +127,10 @@ class FilesController {
     return response.status(200).send(fileList);
   }
 
-  static async putPublish (request, response) {
+  static async putPublish(request, response) {
     const { error, code, updatedFile } = await fileUtils.publishUnpublish(
       request,
-      true
+      true,
     );
 
     if (error) return response.status(code).send({ error });
@@ -142,7 +141,7 @@ class FilesController {
   static async putUnpublish (request, response) {
     const { error, code, updatedFile } = await fileUtils.publishUnpublish(
       request,
-      false
+      false,
     );
 
     if (error) return response.status(code).send({ error });
@@ -150,7 +149,7 @@ class FilesController {
     return response.status(code).send(updatedFile);
   }
 
-  static async getFile (request, response) {
+  static async getFile(request, response) {
     const { userId } = await userUtils.getUserIdAndKey(request);
     const { id: fileId } = request.params;
     const size = request.query.size || 0;
@@ -158,7 +157,7 @@ class FilesController {
     if (!basicUtils.isValidId(fileId)) { return response.status(404).send({ error: 'Not found' }); }
 
     const file = await fileUtils.getFile({
-      _id: ObjectId(fileId)
+      _id: ObjectId(fileId),
     });
 
     if (!file || !fileUtils.isOwnerAndPublic(file, userId)) { return response.status(404).send({ error: 'Not found' }); }
