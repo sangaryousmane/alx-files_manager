@@ -11,9 +11,7 @@ class AuthController {
 
     if (!credentials) { return response.status(401).send({ error: 'Unauthorized' }); }
 
-    const decodedCredentials = Buffer.from(credentials, 'base64').toString(
-      'utf-8'
-    );
+    const decodedCredentials = Buffer.from(credentials, 'base64').toString('utf-8');
 
     const [email, password] = decodedCredentials.split(':');
 
