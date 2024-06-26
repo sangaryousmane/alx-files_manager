@@ -20,9 +20,7 @@ class FilesController {
       await fileQueue.add({});
     }
 
-    const user = await userUtils.getUser({
-      _id: ObjectId(userId)
-    });
+    const user = await userUtils.getUser({_id: ObjectId(userId)});
 
     if (!user) return response.status(401).send({ error: 'Unauthorized' });
 
@@ -138,7 +136,7 @@ class FilesController {
     return response.status(code).send(updatedFile);
   }
 
-  static async putUnpublish (request, response) {
+  static async putUnpublish(request, response) {
     const { error, code, updatedFile } = await fileUtils.publishUnpublish(
       request,
       false,
