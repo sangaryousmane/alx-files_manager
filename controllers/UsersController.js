@@ -7,7 +7,7 @@ import userUtils from '../utils/user';
 const userQueue = new Queue('userQueue');
 
 class UsersController {
-  static async postNew (request, response) {
+  static async postNew(request, response) {
     const { email, password } = request.body;
 
     if (!email) return response.status(400).send({ error: 'Missing email' });
@@ -24,7 +24,7 @@ class UsersController {
     try {
       result = await dbClient.usersCollection.insertOne({
         email,
-        password: sha1Password
+        password: sha1Password,
       });
     } catch (err) {
       await userQueue.add({});
@@ -33,21 +33,21 @@ class UsersController {
 
     const user = {
       id: result.insertedId,
-      email
+      email,
     };
 
     await userQueue.add({
-      userId: result.insertedId.toString()
+      userId: result.insertedId.toString(),
     });
 
     return response.status(201).send(user);
   }
 
-  static async getMe (request, response) {
+  static async getMe(request, response) {
     const { userId } = await userUtils.getUserIdAndKey(request);
 
     const user = await userUtils.getUser({
-      _id: ObjectId(userId)
+      _id: ObjectId(userId),
     });
 
     if (!user) return response.status(401).send({ error: 'Unauthorized' });
